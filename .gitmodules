@@ -1,0 +1,3 @@
+[submodule "lib/FlexCAN"]
+	path = lib/FlexCAN
+	url = https://github.com/pawelsky/FlexCAN_Library.git
