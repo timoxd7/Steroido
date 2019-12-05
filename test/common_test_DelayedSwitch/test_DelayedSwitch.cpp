@@ -1,11 +1,12 @@
 #include <unity.h>
-#include "AbstractionLayer/Arduino/NonCopyable.h"
+#include "Common/NonCopyable.h"
 #define STEROIDO_DISABLE_LOOP
-#include "Common/setupLoopWrapper.h"
 #include "Common/ITimer.h"
 
 #if defined(USE_ARDUINO) || defined(USE_TEENSY)
     #include "Arduino.h"
+#else
+    #include "Common/setupLoopWrapper.h"
 #endif
 
 #ifdef USE_MBED

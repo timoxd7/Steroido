@@ -5,78 +5,17 @@
 #define VECTOR_AUTO_RESERVE_MULTIPLICATOR 2
 #define VECTOR_AUTO_RESERVE_ADDITION 0
 
-template<class T, typename counter_type_t>
-class iterator {
-    public:
-        iterator(T& element, counter_type_t pos)
-        : _ptr(&element), _pos(pos) {}
+namespace std {
 
-        iterator(T* ptr, counter_type_t pos)
-        : _ptr(ptr), _pos(pos) {}
-
-        T& operator*() {
-            return *_ptr;
-        }
-
-        bool operator==(iterator<T, counter_type_t> that) {
-            return _ptr == that.getPtr() && _pos == that.getPos();
-        }
-
-        bool operator!=(iterator<T, counter_type_t> that) {
-            return _ptr != that.getPtr() || _pos != that.getPos();
-        }
-
-        iterator<T, counter_type_t> operator++(int) { // -> something++
-            iterator<T, counter_type_t> oldThis = *this;
-
-            ++_ptr;
-            ++_pos;
-
-            return oldThis;
-        }
-
-        iterator<T, counter_type_t>& operator++() { // -> ++something
-            ++_ptr;
-            ++_pos;
-
-            return *this;
-        }
-
-        iterator<T, counter_type_t> operator--(int) { // -> something--
-            iterator<T, counter_type_t> oldThis = *this;
-
-            --_ptr;
-            --_pos;
-
-            return oldThis;
-        }
-
-        iterator<T, counter_type_t>& operator--() { // -> --something
-            --_ptr;
-            --_pos;
-
-            return *this;
-        }
-
-        counter_type_t getPos() {
-            return _pos;
-        }
-
-        T* getPtr() {
-            return _ptr;
-        }
-
-    private:
-        T* _ptr;
-        counter_type_t _pos;
-};
+template <class T>
+using iterator = T*;
 
 template<class T, typename counter_type_t = unsigned int>
-class vector {
+class vector : private NonCopyable<vector<T, counter_type_t>> {
     public:
         // Destructor
         ~vector() {
-            delete _begin;
+            clear();
         }
 
         // Element access
@@ -92,10 +31,6 @@ class vector {
         }
 
         T& front() {
-            if (empty()) {
-                return *_begin;
-            }
-
             return *_begin;
         }
 
@@ -116,12 +51,12 @@ class vector {
         }
 
         // Iterators
-        iterator<T, counter_type_t> begin() {
-            return iterator<T, counter_type_t>(_begin, 0);
+        iterator<T> begin() {
+            return _begin;
         }
 
-        iterator<T, counter_type_t> end() {
-            return iterator<T, counter_type_t>(_begin + _currentElementCount, _currentElementCount);
+        iterator<T> end() {
+            return _begin + _currentElementCount;
         }
 
         // Capacity
@@ -153,9 +88,9 @@ class vector {
             _currentSize = 0;
 
             if (_begin == _data1) {
-                delete _data1;
+                free(_rawData1);
             } else if (_begin == _data2) {
-                delete _data2;
+                free(_rawData2);
             }
 
             _data1 = nullptr;
@@ -163,17 +98,18 @@ class vector {
             _begin = nullptr;
         }
 
-        iterator<T, counter_type_t> erase(iterator<T, counter_type_t> pos) {
-            if (pos.getPos() >= _currentElementCount) return pos;
-            if (pos.getPtr() != _begin + pos.getPos()) return pos;
+        iterator<T> erase(iterator<T> pos) {
+            if (pos >= end()) return pos;
 
-            for (counter_type_t i = pos.getPos(); i < _currentElementCount - 1; ++i) { // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
+            counter_type_t index = pos - _begin;
+
+            for (counter_type_t i = index; i < _currentElementCount - 1; ++i) { // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
                 _begin[i] = _begin[i+1];
             }
 
             --_currentElementCount;
 
-            return iterator<T, counter_type_t>(_begin + pos.getPos(), pos.getPos());
+            return pos;
         }
 
         void push_back(T& value) {
@@ -199,10 +135,14 @@ class vector {
         T* _data1 = nullptr;
         T* _data2 = nullptr;
 
+        void* _rawData1 = nullptr;
+        void* _rawData2 = nullptr;
+
         inline void _changeCapacity(counter_type_t new_cap, counter_type_t elementsToCopy) {
             if (_begin == _data1) {
                 // Allocate new memory
-                _data2 = new T[new_cap];
+                _rawData2 = malloc(new_cap * sizeof(T));
+                _data2 = (T*)_rawData2;
 
                 // Copy Data
                 memCpy<T>(_data2, _data1, elementsToCopy);
@@ -211,10 +151,12 @@ class vector {
                 _begin = _data2;
 
                 // Free up Memory
-                delete _data1;
+                free(_rawData1);
+                _data1 = nullptr;
             } else {
                 // Allocate new memory
-                _data1 = new T[new_cap];
+                _rawData1 = malloc(new_cap * sizeof(T));
+                _data1 = (T*)_rawData1;
 
                 // Copy Data
                 memCpy<T>(_data1, _data2, elementsToCopy);
@@ -223,11 +165,14 @@ class vector {
                 _begin = _data1;
 
                 // Free up Memory
-                delete _data2;
+                free(_rawData2);
+                _data2 = nullptr;
             }
 
             _currentSize = new_cap;
         }
 };
+
+}; // namespace std
 
 #endif // VECTOR_H

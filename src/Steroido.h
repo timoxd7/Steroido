@@ -8,12 +8,14 @@
 
 // Include Arduino Hardware Drivers
 #ifdef Arduino_h
+    // Baseclass
+    #include "Common/NonCopyable.h"
+
     // STL
-    #include <vector>
+    #include "Common/vector.h"
 
     // Abstraction Layer
     #include "AbstractionLayer/Arduino/printfIntegration.h"
-    #include "AbstractionLayer/Arduino/NonCopyable.h"
     #include "AbstractionLayer/Arduino/Callback.h"
     #include "AbstractionLayer/Arduino/CircularBuffer.h"
     #include "AbstractionLayer/Arduino/Timer.h"
