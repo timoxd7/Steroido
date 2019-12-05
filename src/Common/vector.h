@@ -88,9 +88,9 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             _currentSize = 0;
 
             if (_begin == _data1) {
-                free(_rawData1);
+                delete _rawData1;
             } else if (_begin == _data2) {
-                free(_rawData2);
+                delete _rawData2;
             }
 
             _data1 = nullptr;
@@ -141,7 +141,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         inline void _changeCapacity(counter_type_t new_cap, counter_type_t elementsToCopy) {
             if (_begin == _data1) {
                 // Allocate new memory
-                _rawData2 = malloc(new_cap * sizeof(T));
+                _rawData2 = new char[new_cap * sizeof(T)];
                 _data2 = (T*)_rawData2;
 
                 // Copy Data
@@ -151,11 +151,11 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
                 _begin = _data2;
 
                 // Free up Memory
-                free(_rawData1);
+                delete _rawData1;
                 _data1 = nullptr;
             } else {
                 // Allocate new memory
-                _rawData1 = malloc(new_cap * sizeof(T));
+                _rawData1 = new char[new_cap * sizeof(T)];
                 _data1 = (T*)_rawData1;
 
                 // Copy Data
@@ -165,7 +165,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
                 _begin = _data1;
 
                 // Free up Memory
-                free(_rawData2);
+                delete _rawData2;
                 _data2 = nullptr;
             }
 
