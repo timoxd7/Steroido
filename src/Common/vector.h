@@ -103,6 +103,8 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
 
             counter_type_t index = pos - _begin;
 
+            pos->~T();
+
             for (counter_type_t i = index; i < _currentElementCount - 1; ++i) { // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
                 _begin[i] = _begin[i+1];
             }
@@ -135,8 +137,8 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         T* _data1 = nullptr;
         T* _data2 = nullptr;
 
-        void* _rawData1 = nullptr;
-        void* _rawData2 = nullptr;
+        char* _rawData1 = nullptr;
+        char* _rawData2 = nullptr;
 
         inline void _changeCapacity(counter_type_t new_cap, counter_type_t elementsToCopy) {
             if (_begin == _data1) {

@@ -33,6 +33,7 @@ using namespace std;
 
 
 uint16_t runningId = 0;
+uint16_t copyCount = 0;
 
 class testObject {
     public:
@@ -44,11 +45,14 @@ class testObject {
         testObject(const testObject &that) {
             thisId = that.thisId;
             printf("Copy: %i\n", thisId);
+            copyCount++;
         }
 
-        operator=(const testObject &that) {
+        testObject& operator=(const testObject &that) {
             thisId = that.thisId;
             printf("Copy Assign: %i\n", thisId);
+            copyCount++;
+            return *this;
         }
 
         ~testObject() {
@@ -131,14 +135,12 @@ void vectorTest() {
     }
 
     printf("Delete all after delete ID\n");
-    {
-        uint16_t i = 0;
-        for (auto it = testVector.begin(); it != testVector.end();) {
-            if (i++ >= ELEMENT_DELETE_ALL_FROM_ID) {
-                it = testVector.erase(it);
-            } else {
-                it++;
-            }
+    for (auto it = testVector.end() - 1; it != testVector.begin();) {
+        if (it->getId() >= ELEMENT_DELETE_ALL_FROM_ID) {
+            it = testVector.erase(it);
+            it--;
+        } else {
+            it--;
         }
     }
 
@@ -154,6 +156,8 @@ void vectorTest() {
             TEST_ASSERT_EQUAL_MESSAGE(i++, it->getId(), "T8");
         }
     }
+
+    printf("A total of %i elements got copied\n", copyCount);
 }
 
 
