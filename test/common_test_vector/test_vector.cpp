@@ -3,8 +3,6 @@
 #include "Common/memCpy.h"
 #include "Common/memSet.h"
 
-#include "Common/vector.h"
-using namespace std;
 
 #define STEROIDO_DISABLE_LOOP
 
@@ -21,6 +19,10 @@ using namespace std;
 #ifdef USE_NATIVE
     #include <stdio.h>
 #endif
+
+
+#include "Common/vector.h"
+using namespace std;
 
 
 #define ELEMENT_RESERVE_COUNT 64
