@@ -1,9 +1,6 @@
 #ifndef ANALOG_OUT_H
 #define ANALOG_OUT_H
 
-#include "Common/NonCopyable.h"
-#include "PinName.h"
-
 class AnalogOut : private NonCopyable<AnalogOut> {
     public:
         AnalogOut(PinName pin)

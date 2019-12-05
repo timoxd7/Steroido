@@ -1,17 +1,16 @@
 #ifndef ANALOG_IN_H
 #define ANALOG_IN_H
 
-#include "Common/NonCopyable.h"
-#include "PinName.h"
-
-#define ANALOG_IN_RESOLUTION 10 // bit
+#ifndef ANALOG_IN_RESOLUTION
+    #define ANALOG_IN_RESOLUTION 10 // bit
+#endif
 
 class AnalogIn : private NonCopyable<AnalogIn> {
     public:
         AnalogIn(PinName pin)
         : _pin(pin) {
             pinMode(pin, INPUT);
-            _devider = powC<uint16_t>(2, ANALOG_IN_RESOLUTION);
+            _devider = (1 << ANALOG_IN_RESOLUTION) - 1;
         }
 
         float read() {
@@ -19,7 +18,10 @@ class AnalogIn : private NonCopyable<AnalogIn> {
         }
 
         uint16_t read_u16() {
-            return analogRead(_pin) << ANALOG_IN_RESOLUTION;
+            uint16_t value = (analogRead(_pin) << (16 - ANALOG_IN_RESOLUTION));
+            value |= (value >> ANALOG_IN_RESOLUTION);
+
+            return value;
         }
 
         operator float() {

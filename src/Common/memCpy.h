@@ -11,8 +11,8 @@
     @param len  Count of elements to be copied (! NOT BYTES !)
 */
 template<typename T>
-T* memCpy(T* dest, const T* src, size_t len) {
-    while (len--)
+T* memCpy(T* dest, const T* src, size_t cnt) {
+    while (cnt--)
         *dest++ = *src++;
     return dest;
 }

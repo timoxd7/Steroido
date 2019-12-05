@@ -1,9 +1,6 @@
 #ifndef DIGITAL_OUT_H
 #define DIGITAL_OUT_H
 
-#include "Common/NonCopyable.h"
-#include "PinName.h"
-
 class DigitalOut {
     public:
         DigitalOut(PinName pin)

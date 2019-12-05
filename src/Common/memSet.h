@@ -11,8 +11,8 @@
     @param len  Count of elements to be set (! NOT BYTES !)
 */
 template<typename T>
-T* memSet(T* dest, T val, size_t len) {
-    while (len-- > 0)
+T* memSet(T* dest, T val, size_t cnt) {
+    while (cnt-- > 0)
         *dest++ = val;
     return dest;
 }

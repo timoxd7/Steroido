@@ -1,8 +1,6 @@
 #ifndef CIRCULARBUFFER_H
 #define CIRCULARBUFFER_H
 
-#include "NonCopyable.h"
-
 /*
     Templated Circular buffer class
     @note CounterType must be unsigned and consistent with BufferSize

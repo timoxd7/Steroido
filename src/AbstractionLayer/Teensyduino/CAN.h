@@ -7,17 +7,16 @@
 #define STD_CAN_BAUD 250000
 #define STD_CAN_MESSAGE_TIMEOUT 10
 
+// Show that CAN is possible
+#define STEROIDO_DEVICE_CAN
+
 class CAN : private NonCopyable<CAN> {
     public:
         // Construct FlexCAN based CAN Object. rd and td are only given for compatibility reasons, starndard Pins of Teensy will be used!
-        CAN(PinName rd, PinName td, uint16_t hz)
+        CAN(PinName rd, PinName td, uint16_t hz = STD_CAN_BAUD)
         : _can(hz) {
             _can.begin();
         }
-
-        // Construct FlexCAN based CAN Object. rd and td are only given for compatibility reasons, starndard Pins of Teensy will be used!
-        CAN(PinName rd, PinName td)
-        : CAN(rd, td, STD_CAN_BAUD) {}
 
         virtual ~CAN() {
             _can.end();
