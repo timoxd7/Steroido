@@ -62,7 +62,7 @@ void tickerTest() {
 
     _millis += 1100;
     TestClass testClass;
-    testTicker.attach(callback(testClass, TestClass::callMe), 2.0);
+    testTicker.attach(callback(testClass, &TestClass::callMe), 2.0);
 
     scheduler.run();
 
