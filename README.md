@@ -22,6 +22,7 @@ Steriodo OS gives the following capabilities:
 - printf for all supported platforms
 - vector for all supported platforms
 - Callbacks
+- CAN for all supported mbed and teensy devices (not arduino yet)
 
 ## Usage
 Steroido OS in its basic usage is similar with Arduino:
