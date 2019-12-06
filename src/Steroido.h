@@ -15,7 +15,11 @@
     #include "Common/NonCopyable.h"
 
     // STL
-    #include "Common/vector.h"
+    #ifdef TEENSY
+        #include <vector>
+    #else
+        #include "Common/vector.h"
+    #endif
 
     // Abstraction Layer
     #include "AbstractionLayer/Arduino/printfIntegration.h"
@@ -49,6 +53,7 @@
 
 
 #ifdef MBED_H
+    #include <vector>
     #define VECTOR_EMPLACE_BACK_ENABLED
 
     #ifdef DEVICE_CAN

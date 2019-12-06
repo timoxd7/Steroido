@@ -60,11 +60,11 @@ class Scheduler {
                 if (element.callable == &callable) return; // -> element already added
             }
 
-            #ifdef Arduino_h
+            #ifdef VECTOR_EMPLACE_BACK_ENABLED
+                schedule.emplace_back((C)callable);
+            #else
                 SchedulerElement<C> element(callable);
                 schedule.push_back(element);
-            #else
-                schedule.emplace_back((C)callable);
             #endif
         }
 
