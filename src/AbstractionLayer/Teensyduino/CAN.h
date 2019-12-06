@@ -4,16 +4,13 @@
 #include "Communication/CANMessage.h"
 #include "FlexCAN.h"
 
-#define STD_CAN_BAUD 250000
-#define STD_CAN_MESSAGE_TIMEOUT 10
-
-// Show that CAN is possible
-#define STEROIDO_DEVICE_CAN
+#define STEROIDO_STD_CAN_BAUD (uint16_t)250000
+#define STEROIDO_STD_CAN_MESSAGE_TIMEOUT 10
 
 class CAN : private NonCopyable<CAN> {
     public:
         // Construct FlexCAN based CAN Object. rd and td are only given for compatibility reasons, starndard Pins of Teensy will be used!
-        CAN(PinName rd, PinName td, uint16_t hz = STD_CAN_BAUD)
+        CAN(PinName rd, PinName td, uint16_t hz = STEROIDO_STD_CAN_BAUD)
         : _can(hz) {
             _can.begin();
         }
@@ -36,7 +33,7 @@ class CAN : private NonCopyable<CAN> {
             }
 
             flexMessage.len = msg.len;
-            flexMessage.timeout = STD_CAN_MESSAGE_TIMEOUT;
+            flexMessage.timeout = STEROIDO_STD_CAN_MESSAGE_TIMEOUT;
 
             for (uint8_t i = 0; i < msg.len; i++) {
                 flexMessage.buf[i] = msg.data[i];

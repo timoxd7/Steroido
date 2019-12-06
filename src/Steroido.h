@@ -5,6 +5,9 @@
 #include "Common/memCpy.h"
 #include "Common/memSet.h"
 
+// Define a standard wait time, e.g. for a loop wait
+#define STEROIDO_STD_WAIT_TIME 0.0001 // s
+
 
 // Include Arduino Hardware Drivers
 #ifdef Arduino_h
@@ -32,21 +35,28 @@
     #include "OS/ScheduledCallable.h"
     #include "OS/Scheduler.h"
     #include "OS/Ticker.h"
+
+    #define wait(seconds) delay(seconds * 1000)
 #endif // Arduino_h
 
 
 #ifdef TEENSY
     #include "AbstractionLayer/Teensyduino/CAN.h"
+
+    // Show that CAN is possible
+    #define STEROIDO_DEVICE_CAN
 #endif // TEENSY
 
 
 #ifdef MBED_H
-    // Include nothing, brings all with it
     #define VECTOR_EMPLACE_BACK_ENABLED
 
     #ifdef DEVICE_CAN
         #define STEROIDO_DEVICE_CAN
+        #define STEROIDO_CAN_INTERRUPT_ENABLED
     #endif
+
+    #define STEROIDO_WAIT_NEEDED
 
     #include "Common/setupLoopWrapper.h"
 #endif // MBED_H
@@ -59,6 +69,9 @@
     #ifndef STEROIDO_DISABLE_LOOP
         void loop() {
             Scheduler::run();
+            #ifdef STEROIDO_WAIT_NEEDED
+                wait(STEROIDO_STD_WAIT_TIME);
+            #endif
         }
     #endif
 #endif
