@@ -8,7 +8,7 @@ namespace steroido_intern {
     template<typename R>
     class Callable {
         public:
-            virtual ~Callable() = 0;
+            virtual ~Callable() {}
             virtual R call() = 0;
     };
 };
@@ -61,7 +61,9 @@ class Callback {
         }
 
         R call() {
-            return _callback->call();
+            if (*_instanceCount) {
+                return _callback->call();
+            }
         }
     
     private:
