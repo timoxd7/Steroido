@@ -8,6 +8,7 @@ namespace steroido_intern {
     template<typename R>
     class Callable {
         public:
+            virtual ~Callable() = 0;
             virtual R call() = 0;
     };
 };
