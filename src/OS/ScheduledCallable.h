@@ -7,6 +7,7 @@ typedef float sleeptime_t;
 
 class ScheduledCallable : public ICallable {
     public:
+        ScheduledCallable() : _sleeptime(0) {}
         ScheduledCallable(sleeptime_t sleeptime) : _sleeptime(sleeptime) {}
 
         sleeptime_t getSleepingSince() {

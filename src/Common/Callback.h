@@ -3,9 +3,26 @@
 
 typedef uint32_t callback_instance_counter_type_t;
 
+namespace steroido_intern {
+    // Callable Interface
+    template<typename R>
+    class Callable {
+        public:
+            virtual R call() = 0;
+    };
+};
+
 template<typename R>
 class Callback {
     public:
+        /*
+            Standard Constructor. Don't use, otherwise your programm will so dermaßend abschmieren, das glauben sie mir nicht
+        */
+        Callback() : _callback(nullptr) {
+            _instanceCount = new callback_instance_counter_type_t;
+            *_instanceCount = 0;
+        }
+
         /*
             Construct a Callback using a Function (-pointer)
 
@@ -31,14 +48,15 @@ class Callback {
         }
 
         ~Callback() {
-            if (!(--(*_instanceCount))) {
-                delete _callback;
-                delete _instanceCount;
-            }
+            _destruct();
+        }
+        
+        Callback(const Callback<R> &that) {
+            _copy(that);
         }
 
-        Callback(const Callback &that) {
-            ++(*_instanceCount);
+        Callback<R>& operator=(const Callback<R> &that) {
+            return _copy(that);
         }
 
         R call() {
@@ -46,19 +64,31 @@ class Callback {
         }
     
     private:
-        Callback() {}
-
-        // Callable Interface
-        class Callable {
-            virtual R call() = 0;
-        };
-
         // Member Variables
-        Callable *_callback;
+        steroido_intern::Callable<R> *_callback;
         callback_instance_counter_type_t *_instanceCount;
 
+        void _destruct() {
+            if (!(*_instanceCount)) {
+                delete _instanceCount;
+            } else if (!(--(*_instanceCount))) {
+                delete _callback;
+                delete _instanceCount;
+            }
+        }
+
+        Callback<R>& _copy(const Callback<R> &that) {
+            _destruct();
+
+            _callback = that._callback;
+            _instanceCount = that._instanceCount;
+
+            ++(*_instanceCount);
+            return *this;
+        }
+
         // Specific caller using the Callable Interface
-        class FunctionCaller : public Callable {
+        class FunctionCaller : public steroido_intern::Callable<R> {
             public:
                 FunctionCaller(R(*func)()) : _func(func) {}
 
@@ -72,7 +102,7 @@ class Callback {
         };
 
         template<typename T, typename U>
-        class MethodCaller : public Callable {
+        class MethodCaller : public steroido_intern::Callable<R> {
             public:
                 MethodCaller(U *obj, R (T::*method)()) : _obj(obj), _method(method) {}
 

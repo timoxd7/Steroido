@@ -1,20 +1,4 @@
-#include "unity.h"
-#include "Common/NonCopyable.h"
-#include "Common/memCpy.h"
-#include "Common/memSet.h"
-
-
-#define STEROIDO_DISABLE_LOOP
-
-#if defined(USE_ARDUINO) || defined(USE_TEENSY)
-    #include "Arduino.h"
-#else
-    #include "Common/setupLoopWrapper.h"
-#endif
-
-#ifdef USE_MBED
-    #include "mbed.h"
-#endif
+#include "Common/TestingHeader.h"
 
 #ifdef USE_NATIVE
     #include <stdio.h>

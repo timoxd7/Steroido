@@ -3,7 +3,7 @@
 
 class Scheduler {
     public:
-        static void run() {
+        void run() {
             // Call single callables first (e.g. with not sleeptime)
             for (auto &element : callableSchedule) {
                 element.call();
@@ -18,19 +18,19 @@ class Scheduler {
             }
         }
 
-        static void add(ScheduledCallable &callable) {
+        void addScheduled(ScheduledCallable &callable) {
             _add<ScheduledCallable>(callable, scheduledSchedule);
         }
 
-        static void add(ICallable &callable) {
+        void add(ICallable &callable) {
             _add<ICallable>(callable, callableSchedule);
         }
         
-        static void remove(ScheduledCallable &callable) {
+        void removeScheduled(ScheduledCallable &callable) {
             _remove<ScheduledCallable>(callable, scheduledSchedule);
         }
 
-        static void remove(ICallable &callable) {
+        void remove(ICallable &callable) {
             _remove<ICallable>(callable, callableSchedule);
         }
     
@@ -50,11 +50,11 @@ class Scheduler {
                 C *callable;
         };
 
-        static std::vector<SchedulerElement<ICallable>> callableSchedule;
-        static std::vector<SchedulerElement<ScheduledCallable>> scheduledSchedule;
+        std::vector<SchedulerElement<ICallable>> callableSchedule;
+        std::vector<SchedulerElement<ScheduledCallable>> scheduledSchedule;
 
         template<class C>
-        static void _add(C &callable, std::vector<SchedulerElement<C>> &schedule) {
+        void _add(C &callable, std::vector<SchedulerElement<C>> &schedule) {
             // First check if already added
             for (auto &element : schedule) {
                 if (element.callable == &callable) return; // -> element already added
@@ -69,7 +69,7 @@ class Scheduler {
         }
 
         template<class C>
-        static void _remove(C &callable, std::vector<SchedulerElement<C>> &schedule) {
+        void _remove(C &callable, std::vector<SchedulerElement<C>> &schedule) {
             for (auto it = schedule.begin(); it != schedule.end(); ++it) {
                 if (it->callable == &callable) {
                     schedule.erase(it);

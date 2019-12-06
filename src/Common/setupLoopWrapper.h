@@ -2,7 +2,10 @@
 #define SETUP_LOOP_WRAPPER_H
 
 void setup();
-void loop();
+
+#ifndef STEROIDO_DISABLE_LOOP
+    void loop();
+#endif
 
 int main() {
     setup();

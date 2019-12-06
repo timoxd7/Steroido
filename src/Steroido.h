@@ -23,8 +23,8 @@
 
     // Abstraction Layer
     #include "AbstractionLayer/Arduino/printfIntegration.h"
-    #include "AbstractionLayer/Arduino/Callback.h"
-    #include "AbstractionLayer/Arduino/CircularBuffer.h"
+    #include "Common/Callback.h"
+    #include "Common/CircularBuffer.h"
     #include "AbstractionLayer/Arduino/Timer.h"
     #include "AbstractionLayer/Arduino/PinName.h"
     #include "AbstractionLayer/Arduino/PinMode.h"
@@ -38,7 +38,13 @@
     #include "OS/ICallable.h"
     #include "OS/ScheduledCallable.h"
     #include "OS/Scheduler.h"
+
+    #define STEROIDO_SCHEDULER_RUN_NEEDED
+    Scheduler scheduler;
+
     #include "OS/Ticker.h"
+
+    
 
     #define wait(seconds) delay(seconds * 1000)
 #endif // Arduino_h
