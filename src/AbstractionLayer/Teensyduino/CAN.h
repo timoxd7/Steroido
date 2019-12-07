@@ -2,7 +2,7 @@
 #define CAN_H
 
 #include "Communication/CANMessage.h"
-#include "FlexCAN.h"
+#include "Libraries/FlexCAN/FlexCAN.h"
 
 #define STEROIDO_STD_CAN_BAUD (uint16_t)250000
 #define STEROIDO_STD_CAN_MESSAGE_TIMEOUT 10

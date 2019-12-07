@@ -1,7 +1,7 @@
 #ifndef PRINTF_INTEGRATION_H
 #define PRINTF_INTEGRATION_H
 
-#include "printf.h"
+#include "Libraries/printf/printf.h"
 
 void _putchar(char character) {
     Serial.write(character);
