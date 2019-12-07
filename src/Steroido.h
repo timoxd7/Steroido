@@ -4,6 +4,7 @@
 #include "Common/freeMemory.h"
 #include "Common/memCpy.h"
 #include "Common/memSet.h"
+#include "Common/mapC.h"
 
 // Define a standard wait time, e.g. for a loop wait
 #define STEROIDO_STD_WAIT_TIME 0.0001 // s
