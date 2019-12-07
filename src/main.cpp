@@ -1,4 +1,4 @@
-#ifdef STERODIO_TEST_BUILD
+#ifdef STEROIDO_TEST_BUILD
 
 #ifdef USE_ARDUINO
     #include <Arduino.h>
