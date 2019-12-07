@@ -1,3 +1,5 @@
+#ifdef STERODIO_TEST_BUILD
+
 #ifdef USE_ARDUINO
     #include <Arduino.h>
 #endif
@@ -10,3 +12,5 @@
 
 void setup() {}
 void loop() {}
+
+#endif
