@@ -1,0 +1,12 @@
+{
+    "name": "Steroido",
+    "keywords": "steroido, os",
+    "description": "A small OS running on a Microcontroller-Platform making cross-compilation easy.",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/timoxd7/Steroido.git"
+    },
+    "frameworks": "arduino, mbed",
+    "platforms": "*"
+}
