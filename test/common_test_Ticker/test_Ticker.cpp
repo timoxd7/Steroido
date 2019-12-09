@@ -1,3 +1,5 @@
+#ifdef STEROIDO_UNIT_TEST_ENABLED
+
 #include "Common/TestingHeader.h"
 
 #ifdef USE_NATIVE
@@ -86,3 +88,5 @@ void setup() {
     RUN_TEST(tickerTest);
     UNITY_END();
 }
+
+#endif // STEROIDO_UNIT_TEST_ENABLED

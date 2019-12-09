@@ -1,3 +1,5 @@
+#ifdef STEROIDO_UNIT_TEST_ENABLED
+
 #include "Common/TestingHeader.h"
 
 #include "Common/DelayedSwitch.h"
@@ -62,3 +64,5 @@ void setup() {
 }
 
 void loop() {}
+
+#endif // STEROIDO_UNIT_TEST_ENABLED

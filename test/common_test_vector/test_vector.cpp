@@ -1,3 +1,5 @@
+#ifdef STEROIDO_UNIT_TEST_ENABLED
+
 #include "Common/TestingHeader.h"
 
 #ifdef USE_NATIVE
@@ -184,3 +186,5 @@ void setup() {
 }
 
 void loop() {}
+
+#endif // STEROIDO_UNIT_TEST_ENABLED
