@@ -63,6 +63,8 @@
     #include <vector>
     #define VECTOR_EMPLACE_BACK_ENABLED
 
+    #include "platform/CircularBuffer.h"
+
     #ifdef DEVICE_CAN
         #define STEROIDO_DEVICE_CAN
         #define STEROIDO_CAN_INTERRUPT_ENABLED
