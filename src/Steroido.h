@@ -18,12 +18,13 @@
     // STL
     #ifdef TEENSY
         #include <vector>
+        #define printf Serial.printf
     #else
         #include "Common/vector.h"
+        #include "AbstractionLayer/Arduino/printfIntegration.h"
     #endif
 
     // Abstraction Layer
-    #include "AbstractionLayer/Arduino/printfIntegration.h"
     #include "Common/Callback.h"
     #include "Common/CircularBuffer.h"
     #include "AbstractionLayer/Arduino/Timer.h"
