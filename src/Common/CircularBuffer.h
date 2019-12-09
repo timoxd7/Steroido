@@ -6,7 +6,7 @@
     @note CounterType must be unsigned and consistent with BufferSize
 */
 template<typename T, uint16_t BufferSize, typename CounterType = uint16_t>
-class CircularBuffer : private NonCopyable<CircularBuffer<T, BufferSize, CounterType>> {
+class CircularBuffer {
     public:
         CircularBuffer() : _head(0), _tail(0), _full(false) {}
         ~CircularBuffer() {}

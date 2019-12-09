@@ -71,6 +71,7 @@
     #endif
 
     #define STEROIDO_WAIT_NEEDED
+    #define STEROIDO_INTERRUPT_IN_ENABLED
 
     #include "Common/setupLoopWrapper.h"
 #endif // MBED_H
