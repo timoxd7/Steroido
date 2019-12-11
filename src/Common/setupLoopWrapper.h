@@ -15,6 +15,8 @@ int main() {
         loop();
     }
     #endif
+
+    return 0;
 }
 
 #endif
