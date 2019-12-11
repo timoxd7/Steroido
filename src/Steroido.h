@@ -1,7 +1,6 @@
 #ifndef STEROIDO_H
 #define STEROIDO_H
 
-#include "Common/freeMemory.h"
 #include "Common/memCpy.h"
 #include "Common/memSet.h"
 #include "Common/mapC.h"
