@@ -30,7 +30,7 @@ class CANMessage : public CAN_Message {
             type   = CANData;
             format = CANStandard;
             id     = 0;
-            memset(data, 0, 8);
+            memSet<uint8_t>(data, 0, 8);
         }
 
         CANMessage(uint32_t _id, const uint8_t *_data, uint8_t _len, CANType _type = CANData, CANFormat _format = CANStandard) {
@@ -38,7 +38,7 @@ class CANMessage : public CAN_Message {
             type = _type;
             format = _format;
             id = _id;
-            memcpy(data, _data, _len);
+            memCpy<uint8_t>(data, _data, _len);
         }
 
         CANMessage(uint32_t _id, CANFormat _format = CANStandard) {
@@ -46,7 +46,7 @@ class CANMessage : public CAN_Message {
             type   = CANRemote;
             format = _format;
             id     = _id;
-            memset(data, 0, 8);
+            memSet<uint8_t>(data, 0, 8);
         }
 };
 
