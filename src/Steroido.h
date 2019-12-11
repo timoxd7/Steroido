@@ -34,6 +34,7 @@
     #include "AbstractionLayer/Arduino/DigitalIn.h"
     #include "AbstractionLayer/Arduino/DigitalOut.h"
     #include "AbstractionLayer/Arduino/PwmOut.h"
+    #include "Common/DelayedSwitch.h"
 
     // OS
     #include "OS/ICallable.h"
@@ -59,6 +60,26 @@
 #endif // TEENSY
 
 
+#ifdef NATIVE
+    #include <stdint.h>
+    #include "Common/NonCopyable.h"
+    #include <vector>
+
+    // Baseclass
+    #include "Common/NonCopyable.h"
+
+    // STL
+    #include <vector>
+
+    // Abstraction Layer
+    #include "Common/Callback.h"
+    #include "Common/CircularBuffer.h"
+
+    // Main -> Setup/Loop
+    #include "Common/setupLoopWrapper.h"
+#endif // NATIVE
+
+
 #ifdef MBED_H
     #include <vector>
     #define VECTOR_EMPLACE_BACK_ENABLED
@@ -74,10 +95,9 @@
     #define STEROIDO_INTERRUPT_IN_ENABLED
 
     #include "Common/setupLoopWrapper.h"
+
+    #include "Common/DelayedSwitch.h"
 #endif // MBED_H
-
-
-#include "Common/DelayedSwitch.h"
 
 // Auto-Run in a loop
 #ifdef STEROIDO_CONSUME_LOOP
