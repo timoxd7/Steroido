@@ -1,3 +1,6 @@
+#ifndef TESTING_HEADER_H
+#define TESTING_HEADER_H
+
 #include <unity.h>
 #include "Common/NonCopyable.h"
 #define STEROIDO_DISABLE_LOOP
@@ -24,3 +27,5 @@ class Timer : public ITimer {
             return _millis;
         }
 };
+
+#endif // TESTING_HEADER_H

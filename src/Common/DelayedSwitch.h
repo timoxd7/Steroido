@@ -13,38 +13,42 @@ typedef uint16_t delayed_switch_time_t;
 
 class DelayedSwitch : private NonCopyable<DelayedSwitch> {
     public:
-        /*
-            Construct a Delayed Switch with a predefined value
-
-            @param state Predefine a state at the start of the Delayed Switch. By Standard, it is false.
+        /**
+        * @brief Construct a Delayed Switch with a predefined value
+        * 
+        * @param state Predefine a state at the start of the Delayed Switch. By Standard, it is false.
         */
-        DelayedSwitch(bool state = false) : _currentState(state) {}
+        DelayedSwitch(bool state = false) : _currentState(state), _lastSetState(state) {}
 
-        /*
-            Get the current State of the Switch
-
-            Note: set(bool) should be called before
-
-            @return bool current State of the Switch
+        /**
+        * @brief Get the current State of the Switch
+        * 
+        * @return true current State of the Switch
+        * @return false current State of the Switch
         */
         bool get() {
-            return _currentState;
+            return set(_lastSetState);
         }
 
-        /*
-            Shorthand for get()
-        */
+        /**
+         * @brief Shorthand for get()
+         * 
+         * @return true 
+         * @return false 
+         */
         operator bool() {
             return get();
         }
 
-        /*
-            Set the current State of the Signal behind the Switch
-            
-            @param state bool current State of the digital Signal watched by the Switch
-            @return bool the current state of the switch (same as get())
-        */
+        /**
+         * @brief Set the current State of the Signal behind the Switch
+         * 
+         * @param state current State of the digital Signal watched by the Switch
+         * @return true the current state of the switch
+         * @return false the current state of the switch
+         */
         bool set(bool state) {
+            _lastSetState = state;
             if (state == _currentState) {
                 // -> Signal is same than last time
                 if (_changeOccured) {
@@ -104,41 +108,43 @@ class DelayedSwitch : private NonCopyable<DelayedSwitch> {
                 }
             }
 
-            return get();
+            return _currentState;
         }
 
-        /*
-            Shorthand for set(bool state)
-        */
+        /**
+         * @brief Shorthand for set(bool state)
+         * 
+         * @param state 
+         * @return DelayedSwitch& 
+         */
         DelayedSwitch &operator= (bool state) {
             set(state);
             return *this;
         }
 
-        /*
-            Set the Delay between the beginning of a high signal and a high state of the Switch
-
-            @param time the Time between a high Signal and a high state of the Switch in milliseconds
-        */
+        /**
+         * @brief Set the Delay between the beginning of a high signal and a high state of the Switch
+         * 
+         * @param time the Time between a high Signal and a high state of the Switch in milliseconds
+         */
         void setEnableTime(delayed_switch_time_t time) {
             _enableTime = time;
         }
 
-        /*
-            Set the Delay between the beginning of a low signal and a low state of the Switch
-
-            @param time the Time between a low Signal and a low state of the Switch in milliseconds
-        */
+        /**
+         * @brief Set the Delay between the beginning of a low signal and a low state of the Switch
+         * 
+         * @param time the Time between a low Signal and a low state of the Switch in milliseconds
+         */
         void setDisableTime(delayed_switch_time_t time) {
             _disableTime = time;
         }
 
-        /*
-            Reset the delayed Switch.
-            This will reset the switch but not delete the timing settings (enable/disable time).
-
-            @param state Predefine the State of the Delayed Switch. By standard, it is false.
-        */
+        /**
+         * @brief Reset the delayed Switch. This will reset the switch but not delete the timing settings (enable/disable time).
+         * 
+         * @param state Predefine the State of the Delayed Switch. By standard, it is false.
+         */
         void reset(bool state = false) {
             _currentState = state;
             _changeOccured = false;
@@ -146,6 +152,7 @@ class DelayedSwitch : private NonCopyable<DelayedSwitch> {
     
     private:
         bool _currentState;
+        bool _lastSetState;
 
         delayed_switch_time_t _enableTime = 0;
         delayed_switch_time_t _disableTime = 0;

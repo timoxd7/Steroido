@@ -185,6 +185,4 @@ void setup() {
     UNITY_END();
 }
 
-void loop() {}
-
 #endif // STEROIDO_UNIT_TEST_ENABLED

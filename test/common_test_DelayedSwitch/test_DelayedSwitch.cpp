@@ -54,6 +54,14 @@ void testDelayedSwitch() {
     TEST_ASSERT_FALSE_MESSAGE(delayedSwitch.set(true), "T18");
     _millis += 151;
     TEST_ASSERT_TRUE_MESSAGE(delayedSwitch.set(true), "T19");
+    
+    // Test Getter
+    delayedSwitch.setDisableTime(0);
+    TEST_ASSERT_FALSE_MESSAGE(delayedSwitch.set(false), "T20");
+    TEST_ASSERT_FALSE_MESSAGE(delayedSwitch.get(), "T21");
+    TEST_ASSERT_FALSE_MESSAGE(delayedSwitch.set(true), "T22");
+    _millis += 151;
+    TEST_ASSERT_TRUE_MESSAGE(delayedSwitch.get(), "T23");
 }
 
 
@@ -62,7 +70,5 @@ void setup() {
     RUN_TEST(testDelayedSwitch);
     UNITY_END();
 }
-
-void loop() {}
 
 #endif // STEROIDO_UNIT_TEST_ENABLED
