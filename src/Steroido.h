@@ -15,12 +15,22 @@
     #include "Common/NonCopyable.h"
 
     // STL
-    #ifdef TEENSY
+    #if defined(TEENSY) || defined(BIG_ARDUINO)
         #include <vector>
-        #define printf Serial.printf
     #else
         #include "Common/vector.h"
+    #endif
+
+    // printf
+    #ifdef TEENSY
+        #define printf Serial.printf
+    #else
         #include "AbstractionLayer/Arduino/printfIntegration.h"
+    #endif
+
+    // PinName special case
+    #ifdef NUCLEO
+        #define PinName __PINNAME
     #endif
 
     // Abstraction Layer
