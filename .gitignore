@@ -1,3 +1,6 @@
 .pio
 .pioenv
 .vscode
+.idea
+cmake-build-*
+CMakeLists*.txt
