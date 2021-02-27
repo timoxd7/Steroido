@@ -41,7 +41,7 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
                 return *_begin;
             }
 
-            return begin[_currentElementCount - 1];
+            return _begin[_currentElementCount - 1];
         }
 
         value_type* data() noexcept {
@@ -86,11 +86,15 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
 
         // Modifiers
         void clear() noexcept {
+            for (size_type i = 0; i < _currentElementCount; ++i) {
+                _begin[i].~value_type();
+            }
+
             _currentElementCount = 0;
             _currentSize = 0;
 
             if (_begin == _data1) {
-                delete _rawData1;
+                delete[] _rawData1;
             } else if (_begin == _data2) {
                 delete _rawData2;
             }
@@ -105,7 +109,7 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
 
             size_type index = pos - _begin;
 
-            pos->~T();
+            pos->~value_type();
 
             for (size_type i = index; i < _currentElementCount -
                                           1; ++i) { // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
@@ -129,7 +133,7 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
         }
 
         void pop_back() {
-            --_currentElementCount;
+            _begin[--_currentElementCount].~value_type();
         }
 
     private:
@@ -156,7 +160,7 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
                 _begin = _data2;
 
                 // Free up Memory
-                delete _rawData1;
+                delete[] _rawData1;
                 _data1 = nullptr;
             } else {
                 // Allocate new memory
@@ -170,7 +174,7 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
                 _begin = _data1;
 
                 // Free up Memory
-                delete _rawData2;
+                delete[] _rawData2;
                 _data2 = nullptr;
             }
 
