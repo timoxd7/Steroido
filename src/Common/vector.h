@@ -15,6 +15,14 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
     public:
         using reference = value_type&;
         using iterator = value_type*;
+        using const_iterator = const value_type*;
+
+        vector() = default;
+
+        explicit vector(size_type init_cap) {
+            if (init_cap)
+                reserve(init_cap);
+        }
 
         ~vector() {
             clear();
@@ -75,6 +83,19 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
                 _changeCapacity(new_cap, _currentElementCount);
         }
 
+        void resize(size_type new_size) {
+            if (new_size > _currentElementCount) {
+                if (new_size > _currentSize) {
+                    reserve(new_size);
+                }
+            } else {
+                for (size_type i = new_size; i < _currentSize; ++i) {
+                    _begin[i].~value_type();
+                }
+                _changeCapacity(new_size, new_size);
+            }
+        }
+
         size_type capacity() const noexcept {
             return _currentSize;
         }
@@ -104,8 +125,8 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             _begin = nullptr;
         }
 
-        iterator erase(iterator pos) {
-            if (pos >= end()) return pos;
+        iterator erase(const_iterator pos) {
+            if (pos >= end()) return end();
 
             size_type index = pos - _begin;
 
@@ -118,22 +139,53 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
 
             --_currentElementCount;
 
-            return pos;
+            return begin() + index;
         }
 
         void push_back(const value_type& value) {
-            // Get Memory for new element
-            if (_currentSize == 0)
-                reserve(VECTOR_AUTO_PRERESERVED_SPACE);
-            else if (_currentSize == _currentElementCount)
-                reserve((_currentSize * VECTOR_AUTO_RESERVE_MULTIPLICATOR) + VECTOR_AUTO_RESERVE_ADDITION);
-
-            // Copy element
+            _capacity_increase();
             _begin[_currentElementCount++] = value;
+        }
+
+        void push_back(value_type&& val) {
+            _capacity_increase();
+            _begin[_currentElementCount++] = val;
         }
 
         void pop_back() {
             _begin[--_currentElementCount].~value_type();
+        }
+
+        iterator insert(const_iterator position, const value_type& val) {
+            if (position >= end()) return end();
+
+            size_type index = position - _begin;
+
+            _capacity_increase();
+
+            for (size_type i = _currentElementCount; i > index; --i) {
+                _begin[i] = _begin[i - 1];
+            }
+            _begin[index] = val;
+            _currentElementCount++;
+
+            return begin() + index;
+        }
+
+        iterator insert(const_iterator position, const value_type&& val) {
+            if (position >= end()) return end();
+
+            size_type index = position - _begin;
+
+            _capacity_increase();
+
+            for (size_type i = _currentElementCount; i > index; --i) {
+                _begin[i] = _begin[i - 1];
+            }
+            _begin[index] = val;
+            _currentElementCount++;
+
+            return begin() + index;
         }
 
     private:
@@ -179,6 +231,19 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             }
 
             _currentSize = new_cap;
+        }
+
+        void _capacity_increase(size_type free_space = 1) {
+            size_type new_cap = _currentSize;
+            if (new_cap == 0) {
+                new_cap = VECTOR_AUTO_PRERESERVED_SPACE;
+            }
+
+            while (new_cap < _currentElementCount + free_space) {
+                new_cap = (new_cap * VECTOR_AUTO_RESERVE_MULTIPLICATOR) + VECTOR_AUTO_RESERVE_ADDITION;
+            }
+
+            reserve(new_cap);
         }
 };
 
