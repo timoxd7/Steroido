@@ -117,7 +117,7 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             if (_begin == _data1) {
                 delete[] _rawData1;
             } else if (_begin == _data2) {
-                delete _rawData2;
+                delete[] _rawData2;
             }
 
             _data1 = nullptr;
