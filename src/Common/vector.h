@@ -1,7 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <new>
 #include "NonCopyable.h"
 #include "memCpy.h"
 
@@ -88,31 +87,6 @@ class vector : private NonCopyable<vector<T, counter_type>> {
         void reserve(counter_type new_cap) {
             if (new_cap > _currentSize)
                 _changeCapacity(new_cap, _currentElementCount);
-        }
-
-        /**
-         * @brief Resize to the new whished size. After this, [new_size] elements are inside of the vector
-         * 
-         * @param new_size The new amount of elements for this vector
-         */
-        void resize(counter_type new_size) {
-            if (new_size > _currentElementCount) {
-                if (new_size > _currentSize) {
-                    reserve(new_size);
-                }
-
-                for (counter_type i = _currentElementCount; i < new_size; ++i) {
-                    new(_begin + i) T();
-                }
-
-                _currentElementCount = new_size;
-            } else {
-                for (counter_type i = new_size; i < _currentSize; ++i) {
-                    _begin[i].~T();
-                }
-                _currentElementCount = new_size;
-                _changeCapacity(new_size, new_size);
-            }
         }
 
         counter_type capacity() const noexcept {
