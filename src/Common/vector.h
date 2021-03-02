@@ -3,6 +3,7 @@
 
 #include "NonCopyable.h"
 #include "memCpy.h"
+#include "new"
 
 #define VECTOR_AUTO_PRERESERVED_SPACE 4
 #define VECTOR_AUTO_RESERVE_MULTIPLICATOR 2
@@ -79,20 +80,37 @@ class vector : private NonCopyable<vector<T, counter_type>> {
             return _currentElementCount;
         }
 
+        /**
+         * @brief Attempt to preallocate enough memory for specified number of elements.
+         * 
+         * @param new_cap 
+         */
         void reserve(counter_type new_cap) {
             if (new_cap > _currentSize)
                 _changeCapacity(new_cap, _currentElementCount);
         }
 
+        /**
+         * @brief Resize to the new whished size. After this, [new_size] elements are inside of the vector
+         * 
+         * @param new_size The new amount of elements for this vector
+         */
         void resize(counter_type new_size) {
             if (new_size > _currentElementCount) {
                 if (new_size > _currentSize) {
                     reserve(new_size);
                 }
+
+                for (counter_type i = _currentElementCount; i < new_size; ++i) {
+                    new(_begin + i) T();
+                }
+
+                _currentElementCount = new_size;
             } else {
                 for (counter_type i = new_size; i < _currentSize; ++i) {
                     _begin[i].~T();
                 }
+                _currentElementCount = new_size;
                 _changeCapacity(new_size, new_size);
             }
         }
@@ -126,30 +144,29 @@ class vector : private NonCopyable<vector<T, counter_type>> {
             _begin = nullptr;
         }
 
-        iterator erase(const_iterator pos) {
+        iterator erase(iterator pos) {
             if (pos >= end()) return end();
 
             counter_type index = pos - _begin;
 
             pos->~T();
 
-            for (counter_type i = index; i < _currentElementCount -
-                                          1; ++i) { // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
+            --_currentElementCount; // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
+            for (counter_type i = index; i < _currentElementCount; ++i) {
                 _begin[i] = _begin[i + 1];
             }
 
-            --_currentElementCount;
 
-            return begin() + index;
+            return pos;
         }
 
         void push_back(const T& value) {
-            _capacity_increase();
+            _checkOneFree();
             _begin[_currentElementCount++] = value;
         }
 
         void push_back(T&& val) {
-            _capacity_increase();
+            _checkOneFree();
             _begin[_currentElementCount++] = val;
         }
 
@@ -158,35 +175,11 @@ class vector : private NonCopyable<vector<T, counter_type>> {
         }
 
         iterator insert(const_iterator position, const T& val) {
-            if (position >= end()) return end();
-
-            counter_type index = position - _begin;
-
-            _capacity_increase();
-
-            for (counter_type i = _currentElementCount; i > index; --i) {
-                _begin[i] = _begin[i - 1];
-            }
-            _begin[index] = val;
-            _currentElementCount++;
-
-            return begin() + index;
+            return _insert<T&>(position, val);
         }
 
         iterator insert(const_iterator position, const T&& val) {
-            if (position >= end()) return end();
-
-            counter_type index = position - _begin;
-
-            _capacity_increase();
-
-            for (counter_type i = _currentElementCount; i > index; --i) {
-                _begin[i] = _begin[i - 1];
-            }
-            _begin[index] = val;
-            _currentElementCount++;
-
-            return begin() + index;
+            return _insert<T&&>(position, val);
         }
 
     private:
@@ -200,6 +193,12 @@ class vector : private NonCopyable<vector<T, counter_type>> {
         char* _rawData1 = nullptr;
         char* _rawData2 = nullptr;
 
+        /**
+         * @brief Changes Capacity for the container to the new wished size. Does NOT call any construct- or destructors. Does also NOT change _currentElementCount!
+         * 
+         * @param new_cap The new Capacity
+         * @param elementsToCopy The amount of elements to copy to the newly allocated memory
+         */
         inline void _changeCapacity(counter_type new_cap, counter_type elementsToCopy) {
             if (_begin == _data1) {
                 // Allocate new memory
@@ -234,17 +233,40 @@ class vector : private NonCopyable<vector<T, counter_type>> {
             _currentSize = new_cap;
         }
 
-        void _capacity_increase(counter_type free_space = 1) {
-            counter_type new_cap = _currentSize;
-            if (new_cap == 0) {
-                new_cap = VECTOR_AUTO_PRERESERVED_SPACE;
-            }
+        /**
+         * @brief Makes sure that at least one free slot is avaliable
+         * 
+         * @param free_space 
+         */
+        void _checkOneFree() {
+            if (_currentSize == 0)
+                reserve(VECTOR_AUTO_PRERESERVED_SPACE);
+            else if (_currentSize == _currentElementCount)
+                reserve((_currentSize * VECTOR_AUTO_RESERVE_MULTIPLICATOR) + VECTOR_AUTO_RESERVE_ADDITION);
+        }
 
-            while (new_cap < _currentElementCount + free_space) {
-                new_cap = (new_cap * VECTOR_AUTO_RESERVE_MULTIPLICATOR) + VECTOR_AUTO_RESERVE_ADDITION;
-            }
+        /**
+         * @brief Inserts the given Element
+         * 
+         * @tparam T 
+         * @param position 
+         * @param val 
+         */
+        template<typename R>
+        inline iterator _insert(const_iterator position, const R val) {
+            if (position >= end()) return end();
 
-            reserve(new_cap);
+            counter_type index = position - _begin;
+
+            _checkOneFree();
+
+            for (counter_type i = _currentElementCount; i > index; --i) {
+                _begin[i] = _begin[i - 1];
+            }
+            _begin[index] = val;
+            _currentElementCount++;
+
+            return begin() + index;
         }
 };
 
