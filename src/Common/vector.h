@@ -1,9 +1,9 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <new>
 #include "NonCopyable.h"
 #include "memCpy.h"
-#include "new"
 
 #define VECTOR_AUTO_PRERESERVED_SPACE 4
 #define VECTOR_AUTO_RESERVE_MULTIPLICATOR 2
