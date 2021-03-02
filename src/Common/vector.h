@@ -10,16 +10,17 @@
 
 namespace std {
 
-template<typename value_type, typename size_type = unsigned int>
-class vector : private NonCopyable<vector<value_type, size_type>> {
+template<class T, typename counter_type = unsigned int>
+class vector : private NonCopyable<vector<T, counter_type>> {
     public:
-        using reference = value_type&;
-        using iterator = value_type*;
-        using const_iterator = const value_type*;
+        typedef T& reference;
+        typedef T* pointer;
+        typedef pointer iterator;
+        typedef const T* const_iterator;
 
         vector() = default;
 
-        explicit vector(size_type init_cap) {
+        explicit vector(counter_type init_cap) {
             if (init_cap)
                 reserve(init_cap);
         }
@@ -29,14 +30,14 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
         }
 
         // Element access
-        reference at(size_type pos) {
+        reference at(counter_type pos) {
             if (pos >= _currentElementCount)
                 return *_begin;
 
             return _begin[pos];
         }
 
-        reference operator[](size_type pos) {
+        reference operator[](counter_type pos) {
             return at(pos);
         }
 
@@ -52,7 +53,7 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             return _begin[_currentElementCount - 1];
         }
 
-        value_type* data() noexcept {
+        T* data() noexcept {
             if (empty()) {
                 return nullptr;
             }
@@ -74,29 +75,29 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             return _currentElementCount == 0;
         }
 
-        size_type size() const noexcept {
+        counter_type size() const noexcept {
             return _currentElementCount;
         }
 
-        void reserve(size_type new_cap) {
+        void reserve(counter_type new_cap) {
             if (new_cap > _currentSize)
                 _changeCapacity(new_cap, _currentElementCount);
         }
 
-        void resize(size_type new_size) {
+        void resize(counter_type new_size) {
             if (new_size > _currentElementCount) {
                 if (new_size > _currentSize) {
                     reserve(new_size);
                 }
             } else {
-                for (size_type i = new_size; i < _currentSize; ++i) {
-                    _begin[i].~value_type();
+                for (counter_type i = new_size; i < _currentSize; ++i) {
+                    _begin[i].~T();
                 }
                 _changeCapacity(new_size, new_size);
             }
         }
 
-        size_type capacity() const noexcept {
+        counter_type capacity() const noexcept {
             return _currentSize;
         }
 
@@ -107,8 +108,8 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
 
         // Modifiers
         void clear() noexcept {
-            for (size_type i = 0; i < _currentElementCount; ++i) {
-                _begin[i].~value_type();
+            for (counter_type i = 0; i < _currentElementCount; ++i) {
+                _begin[i].~T();
             }
 
             _currentElementCount = 0;
@@ -128,11 +129,11 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
         iterator erase(const_iterator pos) {
             if (pos >= end()) return end();
 
-            size_type index = pos - _begin;
+            counter_type index = pos - _begin;
 
-            pos->~value_type();
+            pos->~T();
 
-            for (size_type i = index; i < _currentElementCount -
+            for (counter_type i = index; i < _currentElementCount -
                                           1; ++i) { // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
                 _begin[i] = _begin[i + 1];
             }
@@ -142,28 +143,28 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             return begin() + index;
         }
 
-        void push_back(const value_type& value) {
+        void push_back(const T& value) {
             _capacity_increase();
             _begin[_currentElementCount++] = value;
         }
 
-        void push_back(value_type&& val) {
+        void push_back(T&& val) {
             _capacity_increase();
             _begin[_currentElementCount++] = val;
         }
 
         void pop_back() {
-            _begin[--_currentElementCount].~value_type();
+            _begin[--_currentElementCount].~T();
         }
 
-        iterator insert(const_iterator position, const value_type& val) {
+        iterator insert(const_iterator position, const T& val) {
             if (position >= end()) return end();
 
-            size_type index = position - _begin;
+            counter_type index = position - _begin;
 
             _capacity_increase();
 
-            for (size_type i = _currentElementCount; i > index; --i) {
+            for (counter_type i = _currentElementCount; i > index; --i) {
                 _begin[i] = _begin[i - 1];
             }
             _begin[index] = val;
@@ -172,14 +173,14 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             return begin() + index;
         }
 
-        iterator insert(const_iterator position, const value_type&& val) {
+        iterator insert(const_iterator position, const T&& val) {
             if (position >= end()) return end();
 
-            size_type index = position - _begin;
+            counter_type index = position - _begin;
 
             _capacity_increase();
 
-            for (size_type i = _currentElementCount; i > index; --i) {
+            for (counter_type i = _currentElementCount; i > index; --i) {
                 _begin[i] = _begin[i - 1];
             }
             _begin[index] = val;
@@ -189,24 +190,24 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
         }
 
     private:
-        size_type _currentSize = 0;
-        size_type _currentElementCount = 0;
-        value_type* _begin = nullptr;
+        counter_type _currentSize = 0;
+        counter_type _currentElementCount = 0;
+        pointer _begin = nullptr;
 
-        value_type* _data1 = nullptr;
-        value_type* _data2 = nullptr;
+        pointer _data1 = nullptr;
+        pointer _data2 = nullptr;
 
         char* _rawData1 = nullptr;
         char* _rawData2 = nullptr;
 
-        inline void _changeCapacity(size_type new_cap, size_type elementsToCopy) {
+        inline void _changeCapacity(counter_type new_cap, counter_type elementsToCopy) {
             if (_begin == _data1) {
                 // Allocate new memory
-                _rawData2 = new char[new_cap * sizeof(value_type)];
-                _data2 = (value_type*) _rawData2;
+                _rawData2 = new char[new_cap * sizeof(T)];
+                _data2 = (pointer) _rawData2;
 
                 // Copy Data
-                memCpy<value_type>(_data2, _data1, elementsToCopy);
+                memCpy<T>(_data2, _data1, elementsToCopy);
 
                 // Change begin pointer to new data location
                 _begin = _data2;
@@ -216,11 +217,11 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
                 _data1 = nullptr;
             } else {
                 // Allocate new memory
-                _rawData1 = new char[new_cap * sizeof(value_type)];
-                _data1 = (value_type*) _rawData1;
+                _rawData1 = new char[new_cap * sizeof(T)];
+                _data1 = (pointer) _rawData1;
 
                 // Copy Data
-                memCpy<value_type>(_data1, _data2, elementsToCopy);
+                memCpy<T>(_data1, _data2, elementsToCopy);
 
                 // Change begin pointer to new data location
                 _begin = _data1;
@@ -233,8 +234,8 @@ class vector : private NonCopyable<vector<value_type, size_type>> {
             _currentSize = new_cap;
         }
 
-        void _capacity_increase(size_type free_space = 1) {
-            size_type new_cap = _currentSize;
+        void _capacity_increase(counter_type free_space = 1) {
+            counter_type new_cap = _currentSize;
             if (new_cap == 0) {
                 new_cap = VECTOR_AUTO_PRERESERVED_SPACE;
             }
