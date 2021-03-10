@@ -41,7 +41,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             if (empty()) {
                 return *_begin;
             }
-            return begin[_currentElementCount - 1];
+            return _begin[_currentElementCount - 1];
         }
 
         T* data() noexcept {
@@ -86,14 +86,18 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 
         // Modifiers
-        void clear() {
+        void clear() noexcept {
+            for (counter_type i = 0; i < _currentElementCount; ++i) {
+                _begin[i].~T();
+            }
+
             _currentElementCount = 0;
             _currentSize = 0;
 
             if (_begin == _data1) {
-                delete _rawData1;
+                delete[] _rawData1;
             } else if (_begin == _data2) {
-                delete _rawData2;
+                delete[] _rawData2;
             }
 
             _data1 = nullptr;
@@ -133,7 +137,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 
         void pop_back() {
-            --_currentElementCount;
+            _begin[--_currentElementCount].~T();
         }
 
     private:
@@ -160,7 +164,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
                 _begin = _data2;
 
                 // Free up Memory
-                delete _rawData1;
+                delete[] _rawData1;
                 _data1 = nullptr;
             } else {
                 // Allocate new memory
@@ -174,7 +178,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
                 _begin = _data1;
 
                 // Free up Memory
-                delete _rawData2;
+                delete[] _rawData2;
                 _data2 = nullptr;
             }
 
