@@ -16,7 +16,14 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         using pointer = T*;
         using iterator = counter_type*;
 
-        // Destructor
+        vector() = default;
+
+        explicit vector(counter_type init_cap) {
+            if (init_cap) {
+                reserve(init_cap);
+            }
+        }
+
         ~vector() {
             clear();
         }
@@ -107,7 +114,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
 
         iterator erase(iterator pos) {
             if (pos >= end()) {
-                return pos;
+                return end();
             }
 
             counter_type index = pos - _begin;
@@ -125,19 +132,25 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 
         void push_back(const T& value) {
-            // Get Memory for new element
-            if (_currentSize == 0) {
-                reserve(VECTOR_AUTO_PRERESERVED_SPACE);
-            } else if (_currentSize == _currentElementCount) {
-                reserve((_currentSize * VECTOR_AUTO_RESERVE_MULTIPLICATOR) + VECTOR_AUTO_RESERVE_ADDITION);
-            }
+            _capacity_free();
+            _begin[_currentElementCount++] = value;
+        }
 
-            // Copy element
+        void push_back(const T&& value) {
+            _capacity_free();
             _begin[_currentElementCount++] = value;
         }
 
         void pop_back() {
             _begin[--_currentElementCount].~T();
+        }
+
+        iterator insert(iterator pos, const T& value) {
+            return _insert<T&>(pos, value);
+        }
+
+        iterator insert(iterator pos, const T&& value) {
+            return _insert<T&&>(pos, value);
         }
 
     private:
@@ -184,6 +197,33 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
 
             _currentSize = new_cap;
         }
+
+        void _capacity_free() {
+            if (_currentSize == 0) {
+                reserve(VECTOR_AUTO_PRERESERVED_SPACE);
+            } else if (_currentSize == _currentElementCount) {
+                reserve((_currentSize * VECTOR_AUTO_RESERVE_MULTIPLICATOR) + VECTOR_AUTO_RESERVE_ADDITION);
+            }
+        }
+
+        template<typename R>
+        inline iterator _insert(iterator pos, const R value) {
+            if (pos >= end()) {
+                return end();
+            }
+            counter_type index = pos - _begin;
+
+            _capacity_free();
+
+            for (counter_type i = _currentElementCount; i > index; --i) {
+                _begin[i] = _begin[i - 1];
+            }
+            _begin[index] = value;
+            _currentElementCount++;
+
+            return pos;
+        }
+
 };
 
 } // namespace std
