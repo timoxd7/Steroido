@@ -1,13 +1,15 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "memCpy.h"
+
 #define VECTOR_AUTO_PRERESERVED_SPACE 4
 #define VECTOR_AUTO_RESERVE_MULTIPLICATOR 2
 #define VECTOR_AUTO_RESERVE_ADDITION 0
 
 namespace std {
 
-template <class T>
+template<class T>
 using iterator = T*;
 
 template<class T, typename counter_type_t = unsigned int>
@@ -20,9 +22,9 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
 
         // Element access
         T& at(counter_type_t pos) {
-            if (pos >= _currentElementCount)
+            if (pos >= _currentElementCount) {
                 return *_begin;
-            
+            }
             return _begin[pos];
         }
 
@@ -38,7 +40,6 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             if (empty()) {
                 return *_begin;
             }
-
             return begin[_currentElementCount - 1];
         }
 
@@ -46,7 +47,6 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             if (empty()) {
                 return nullptr;
             }
-            
             return _begin;
         }
 
@@ -69,17 +69,19 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 
         void reserve(counter_type_t new_cap) {
-            if (new_cap > _currentSize)
+            if (new_cap > _currentSize) {
                 _changeCapacity(new_cap, _currentElementCount);
+            }
         }
-        
+
         counter_type_t capacity() {
             return _currentSize;
         }
 
         void shrink_to_fit() {
-            if (_currentSize > _currentElementCount)
+            if (_currentSize > _currentElementCount) {
                 _changeCapacity(_currentElementCount, _currentElementCount);
+            }
         }
 
         // Modifiers
@@ -99,14 +101,17 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 
         iterator<T> erase(iterator<T> pos) {
-            if (pos >= end()) return pos;
+            if (pos >= end()) {
+                return pos;
+            }
 
             counter_type_t index = pos - _begin;
 
             pos->~T();
 
-            for (counter_type_t i = index; i < _currentElementCount - 1; ++i) { // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
-                _begin[i] = _begin[i+1];
+            for (counter_type_t i = index; i < _currentElementCount - 1; ++i) {
+                // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
+                _begin[i] = _begin[i + 1];
             }
 
             --_currentElementCount;
@@ -116,10 +121,11 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
 
         void push_back(T& value) {
             // Get Memory for new element
-            if (_currentSize == 0)
+            if (_currentSize == 0) {
                 reserve(VECTOR_AUTO_PRERESERVED_SPACE);
-            else if (_currentSize == _currentElementCount)
+            } else if (_currentSize == _currentElementCount) {
                 reserve((_currentSize * VECTOR_AUTO_RESERVE_MULTIPLICATOR) + VECTOR_AUTO_RESERVE_ADDITION);
+            }
 
             // Copy element
             _begin[_currentElementCount++] = value;
@@ -128,7 +134,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         void pop_back() {
             --_currentElementCount;
         }
-    
+
     private:
         counter_type_t _currentSize = 0;
         counter_type_t _currentElementCount = 0;
@@ -144,7 +150,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             if (_begin == _data1) {
                 // Allocate new memory
                 _rawData2 = new char[new_cap * sizeof(T)];
-                _data2 = (T*)_rawData2;
+                _data2 = (T*) _rawData2;
 
                 // Copy Data
                 memCpy<T>(_data2, _data1, elementsToCopy);
@@ -158,7 +164,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             } else {
                 // Allocate new memory
                 _rawData1 = new char[new_cap * sizeof(T)];
-                _data1 = (T*)_rawData1;
+                _data1 = (T*) _rawData1;
 
                 // Copy Data
                 memCpy<T>(_data1, _data2, elementsToCopy);
@@ -175,6 +181,6 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 };
 
-}; // namespace std
+} // namespace std
 
 #endif // VECTOR_H
