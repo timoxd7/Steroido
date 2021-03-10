@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "NonCopyable.h"
 #include "memCpy.h"
 
 #define VECTOR_AUTO_PRERESERVED_SPACE 4
@@ -121,12 +122,11 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
 
             pos->~T();
 
-            for (counter_type i = index; i < _currentElementCount - 1; ++i) {
-                // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
+            --_currentElementCount; // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
+            for (counter_type i = index; i < _currentElementCount; ++i) {
                 _begin[i] = _begin[i + 1];
             }
 
-            --_currentElementCount;
 
             return pos;
         }
@@ -168,7 +168,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             if (_begin == _data1) {
                 // Allocate new memory
                 _rawData2 = new char[new_cap * sizeof(T)];
-                _data2 = (T*) _rawData2;
+                _data2 = (pointer) _rawData2;
 
                 // Copy Data
                 memCpy<T>(_data2, _data1, elementsToCopy);
@@ -182,7 +182,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             } else {
                 // Allocate new memory
                 _rawData1 = new char[new_cap * sizeof(T)];
-                _data1 = (T*) _rawData1;
+                _data1 = (pointer) _rawData1;
 
                 // Copy Data
                 memCpy<T>(_data1, _data2, elementsToCopy);
