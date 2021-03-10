@@ -9,41 +9,42 @@
 
 namespace std {
 
-template<class T>
-using iterator = T*;
-
-template<class T, typename counter_type_t = unsigned int>
+template<class T, typename counter_type = unsigned int>
 class vector : private NonCopyable<vector<T, counter_type_t>> {
     public:
+        using reference = T&;
+        using pointer = T*;
+        using iterator = counter_type*;
+
         // Destructor
         ~vector() {
             clear();
         }
 
         // Element access
-        T& at(counter_type_t pos) {
+        reference at(counter_type pos) {
             if (pos >= _currentElementCount) {
                 return *_begin;
             }
             return _begin[pos];
         }
 
-        T& operator[](counter_type_t pos) {
+        reference operator[](counter_type pos) {
             return at(pos);
         }
 
-        T& front() {
+        reference front() {
             return *_begin;
         }
 
-        T& back() {
+        reference back() {
             if (empty()) {
                 return *_begin;
             }
             return begin[_currentElementCount - 1];
         }
 
-        T* data() {
+        T* data() noexcept {
             if (empty()) {
                 return nullptr;
             }
@@ -51,30 +52,30 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 
         // Iterators
-        iterator<T> begin() {
+        iterator begin() noexcept {
             return _begin;
         }
 
-        iterator<T> end() {
+        iterator end() noexcept {
             return _begin + _currentElementCount;
         }
 
         // Capacity
-        bool empty() {
+        bool empty() const noexcept {
             return _currentElementCount == 0;
         }
 
-        counter_type_t size() {
+        counter_type size() const noexcept {
             return _currentElementCount;
         }
 
-        void reserve(counter_type_t new_cap) {
+        void reserve(counter_type new_cap) {
             if (new_cap > _currentSize) {
                 _changeCapacity(new_cap, _currentElementCount);
             }
         }
 
-        counter_type_t capacity() {
+        counter_type capacity() const noexcept {
             return _currentSize;
         }
 
@@ -100,16 +101,16 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             _begin = nullptr;
         }
 
-        iterator<T> erase(iterator<T> pos) {
+        iterator erase(iterator pos) {
             if (pos >= end()) {
                 return pos;
             }
 
-            counter_type_t index = pos - _begin;
+            counter_type index = pos - _begin;
 
             pos->~T();
 
-            for (counter_type_t i = index; i < _currentElementCount - 1; ++i) {
+            for (counter_type i = index; i < _currentElementCount - 1; ++i) {
                 // -1 because 1 element will be deleted and otherwise it will fail by out of bound by 1
                 _begin[i] = _begin[i + 1];
             }
@@ -119,7 +120,7 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
             return pos;
         }
 
-        void push_back(T& value) {
+        void push_back(const T& value) {
             // Get Memory for new element
             if (_currentSize == 0) {
                 reserve(VECTOR_AUTO_PRERESERVED_SPACE);
@@ -136,17 +137,17 @@ class vector : private NonCopyable<vector<T, counter_type_t>> {
         }
 
     private:
-        counter_type_t _currentSize = 0;
-        counter_type_t _currentElementCount = 0;
-        T* _begin = nullptr;
+        counter_type _currentSize = 0;
+        counter_type _currentElementCount = 0;
+        pointer _begin = nullptr;
 
-        T* _data1 = nullptr;
-        T* _data2 = nullptr;
+        pointer _data1 = nullptr;
+        pointer _data2 = nullptr;
 
         char* _rawData1 = nullptr;
         char* _rawData2 = nullptr;
 
-        inline void _changeCapacity(counter_type_t new_cap, counter_type_t elementsToCopy) {
+        inline void _changeCapacity(counter_type new_cap, counter_type elementsToCopy) {
             if (_begin == _data1) {
                 // Allocate new memory
                 _rawData2 = new char[new_cap * sizeof(T)];
