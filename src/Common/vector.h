@@ -227,7 +227,7 @@ class vector : private NonCopyable<vector<T, counter_type>> {
          * @return Position of the inserted element.
          */
         iterator insert(iterator pos, const T& value) {
-            return _insert<T&>(pos, value);
+            return _insert(pos, value);
         }
 
         /**
@@ -238,7 +238,7 @@ class vector : private NonCopyable<vector<T, counter_type>> {
          * @return Position of the inserted element.
          */
         iterator insert(iterator pos, const T&& value) {
-            return _insert<T&&>(pos, value);
+            return _insert(pos, value);
         }
 
     private:
