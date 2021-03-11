@@ -11,11 +11,11 @@
 namespace std {
 
 template<class T, typename counter_type = unsigned int>
-class vector : private NonCopyable<vector<T, counter_type_t>> {
+class vector : private NonCopyable<vector<T, counter_type>> {
     public:
         using reference = T&;
         using pointer = T*;
-        using iterator = counter_type*;
+        using iterator = pointer;
 
         /**
          * Creates a vector with zero capacity.
