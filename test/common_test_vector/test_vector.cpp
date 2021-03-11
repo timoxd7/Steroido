@@ -11,12 +11,15 @@
 using namespace std;
 
 
+#define ELEMENT_CONSTRUCT_COUNT 16
 #define ELEMENT_RESERVE_COUNT 64
 #define ELEMENT_ADD_COUNT 256
 #define ELEMENT_ERASE_NUMBER 100
 #define ELEMENT_AFTER_ADD_COUNT 32
 #define ELEMENT_DELETE_ALL_FROM_ID 64
+#define ELEMENT_INSERT_COUNT 96
 
+//#define OBJ_PRINTF
 //#define DOC_PRINTF
 
 
@@ -27,14 +30,14 @@ class testObject {
     public:
         testObject() {
             thisId = runningId++;
-            #ifdef DOC_PRINTF
+            #ifdef OBJ_PRINTF
             printf("Construct: %i\n", thisId);
             #endif
         }
 
         testObject(const testObject &that) {
             thisId = that.thisId;
-            #ifdef DOC_PRINTF
+            #ifdef OBJ_PRINTF
             printf("Copy: %i\n", thisId);
             #endif
             copyCount++;
@@ -42,7 +45,7 @@ class testObject {
 
         testObject& operator=(const testObject &that) {
             thisId = that.thisId;
-            #ifdef DOC_PRINTF
+            #ifdef OBJ_PRINTF
             printf("Copy Assign: %i\n", thisId);
             #endif
             copyCount++;
@@ -50,7 +53,7 @@ class testObject {
         }
 
         ~testObject() {
-            #ifdef DOC_PRINTF
+            #ifdef OBJ_PRINTF
             printf("Destroyed: %i\n", thisId);
             #endif
         }
@@ -63,10 +66,13 @@ class testObject {
 };
 
 
-vector<testObject> testVector;
+vector<testObject> testVector(ELEMENT_CONSTRUCT_COUNT);
 
 
 void vectorTest() {
+    // Construct
+    TEST_ASSERT_EQUAL_MESSAGE(ELEMENT_CONSTRUCT_COUNT, testVector.capacity(), "T0");
+
     // Pre reserve
     testVector.reserve(ELEMENT_RESERVE_COUNT);
     TEST_ASSERT_EQUAL_MESSAGE(ELEMENT_RESERVE_COUNT, testVector.capacity(), "T1");
@@ -176,6 +182,33 @@ void vectorTest() {
     #ifdef DOC_PRINTF
     printf("A total of %i elements got copied\n", copyCount);
     #endif
+
+    #ifdef DOC_PRINTF
+    printf("Insert new elements\n");
+    #endif
+    {
+        auto endId = runningId;
+        for (uint16_t i = 0; i < ELEMENT_INSERT_COUNT; i++) {
+            testObject currentObject;
+            testVector.insert(testVector.begin(), currentObject);
+        }
+        auto startId = runningId - 1;
+
+        #ifdef DOC_PRINTF
+        printf("Check inserted correctly\n");
+        #endif
+        TEST_ASSERT_EQUAL_MESSAGE(ELEMENT_DELETE_ALL_FROM_ID + ELEMENT_INSERT_COUNT, testVector.size(), "T9");
+
+        uint16_t num = startId;
+        for (uint16_t i = 0; i < ELEMENT_INSERT_COUNT; i++) {
+            TEST_ASSERT_EQUAL_MESSAGE(num--, testVector[i].getId(), "T10");
+        }
+        TEST_ASSERT_EQUAL_MESSAGE(endId - 1, num, "T11");
+
+        for (uint16_t i = ELEMENT_INSERT_COUNT; i < testVector.size(); i++) {
+            TEST_ASSERT_EQUAL_MESSAGE(i - ELEMENT_INSERT_COUNT, testVector[i].getId(), "T12");
+        }
+    }
 }
 
 
