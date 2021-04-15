@@ -6,7 +6,7 @@
 #include "Common/mapC.h"
 
 // Define a standard wait time, e.g. for a loop wait
-#define STEROIDO_STD_WAIT_TIME 0.0001 // s
+#define STEROIDO_STD_WAIT_TIME 0.000001 // s
 
 // Some shorthand things
 #if defined(TEENSY) || defined(NUCLEO)
@@ -50,16 +50,17 @@
     #include "AbstractionLayer/Arduino/PwmOut.h"
     #include "Common/DelayedSwitch.h"
 
-    // OS
-    #include "OS/ICallable.h"
-    #include "OS/ScheduledCallable.h"
-    #include "OS/Scheduler.h"
+    #ifndef STEROIDO_DISABLE_RTOS
+        // OS
+        #include "OS/ICallable.h"
+        #include "OS/ScheduledCallable.h"
+        #include "OS/Scheduler.h"
 
-    #define STEROIDO_SCHEDULER_RUN_NEEDED
-    Scheduler scheduler;
+        #define STEROIDO_SCHEDULER_RUN_NEEDED
+        Scheduler scheduler;
 
-    #include "OS/Ticker.h"
-
+        #include "OS/Ticker.h"
+    #endif
     
 
     #define wait(seconds) delay(seconds * 1000)
@@ -91,6 +92,8 @@
 
     // Main -> Setup/Loop
     #include "Common/setupLoopWrapper.h"
+
+    #warning "Running in Native mode! Only minor features are activated."
 #endif // NATIVE
 
 
@@ -110,18 +113,29 @@
 
     #include "Common/setupLoopWrapper.h"
 
+    #ifdef STEROIDO_DISABLE_RTOS
+        #warning "RTOS can not be disabled for mbed as it is part of mbed itself!"
+    #endif
+
     #include "Common/DelayedSwitch.h"
 #endif // MBED_H
 
 // Auto-Run in a loop
 #ifdef STEROIDO_CONSUME_LOOP
-    #ifndef STEROIDO_DISABLE_LOOP
-        void loop() {
-            Scheduler::run();
-            #ifdef STEROIDO_WAIT_NEEDED
-                wait(STEROIDO_STD_WAIT_TIME);
-            #endif
-        }
+    #ifdef STEROIDO_DISABLE_LOOP
+        #error "STEROIDO_CONSUME_LOOP is defined, but STEROIDO_DISABLE_LOOP too!"
+    #else
+        #ifdef STEROIDO_DISABLE_RTOS
+            #error "RTOS is disabled but STEROIDO_CONSUME_LOOP is defined!"
+        #else
+            void loop() {
+                Scheduler::run();
+
+                #ifdef STEROIDO_WAIT_NEEDED
+                    wait(STEROIDO_STD_WAIT_TIME);
+                #endif
+            }
+        #endif
     #endif
 #endif
 
