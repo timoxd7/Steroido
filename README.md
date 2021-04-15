@@ -2,7 +2,7 @@
 A small OS running on a Microcontroller-Platform making cross-compilation easy.
 
 ## Build Status
-Branch master: [![Travis Build Status](https://api.travis-ci.org/timoxd7/Steroido.svg?branch=master)](https://travis-ci.org/timoxd7/Steroido)
+Branch master: [![Travis Build Status](https://api.travis-ci.com/timoxd7/Steroido.svg?branch=master)](https://travis-ci.org/timoxd7/Steroido)
 
 ## Intention
 Steriodo OS is intended to minimize the effort to port a software from one Microcontroller Platform to another. It is normally build on top of an existing Platform (e.g. Arduino or mbed) making it compatible with many microcontroller-boards.
