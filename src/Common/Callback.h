@@ -4,7 +4,11 @@
 typedef uint32_t callback_instance_counter_type_t;
 
 namespace steroido_intern {
-    // Callable Interface
+    /**
+     * @brief Callable Interface
+     * 
+     * @tparam R Return Value of the assigned callback function
+     */
     template<typename R>
     class Callable {
         public:
@@ -16,31 +20,34 @@ namespace steroido_intern {
 template<typename R>
 class Callback {
     public:
-        /*
-            Standard Constructor. Don't use, otherwise your programm will so dermaßend abschmieren, das glauben sie mir nicht
-        */
+        /**
+         * @brief Standard Constructor. Don't use, otherwise your programm will so dermaßend abschmieren, das glauben sie mir nicht
+         * 
+         */
         Callback() : _callback(nullptr) {
             _instanceCount = new callback_instance_counter_type_t;
             *_instanceCount = 0;
         }
 
-        /*
-            Construct a Callback using a Function (-pointer)
-
-            @param func Function to be called on call()
-        */
+        /**
+         * @brief Construct a Callback using a Function (-pointer)
+         * 
+         * @param func Function to be called on call()
+         */
         Callback(R(*func)()) {
             _callback = new FunctionCaller(func);
             _instanceCount = new callback_instance_counter_type_t;
             *_instanceCount = 1;
         }
 
-        /*
-            Construct a Callback using a method of an Instance of an Class
-
-            @param obj    The Instance of the Object the Method should be called on
-            @param method The Method (-pointer) to the method of the Class which should be called
-        */
+        /**
+         * @brief Construct a Callback using a method of an Instance of an Class
+         * 
+         * @tparam T 
+         * @tparam U 
+         * @param obj The Instance of the Object the Method should be called on
+         * @param method The Method (-pointer) to the method of the Class which should be called
+         */
         template<typename T, typename U>
         Callback(U* obj, R(T::*method)()) {
             _callback = new MethodCaller<T, U>(obj, method);
@@ -48,18 +55,38 @@ class Callback {
             *_instanceCount = 1;
         }
 
+        /**
+         * @brief Destroy the Callback object
+         * 
+         */
         ~Callback() {
             _destruct();
         }
         
+        /**
+         * @brief Copy-Construct a Callback object
+         * 
+         * @param that 
+         */
         Callback(const Callback<R> &that) {
             _copy(that);
         }
 
+        /**
+         * @brief Copy Assign
+         * 
+         * @param that 
+         * @return Callback<R>& 
+         */
         Callback<R>& operator=(const Callback<R> &that) {
             return _copy(that);
         }
 
+        /**
+         * @brief Call the Callback
+         * 
+         * @return R 
+         */
         R call() {
             if (*_instanceCount) {
                 return _callback->call();
@@ -90,7 +117,10 @@ class Callback {
             return *this;
         }
 
-        // Specific caller using the Callable Interface
+        /**
+         * @brief Specific caller using the Callable Interface
+         * 
+         */
         class FunctionCaller : public steroido_intern::Callable<R> {
             public:
                 FunctionCaller(R(*func)()) : _func(func) {}
@@ -121,20 +151,45 @@ class Callback {
 };
 
 
-// Functions for easyer and faster access to a Callback
+// -------------- Functions for easier and faster access to a Callback
 
-// Callback for a single function
+/**
+ * @brief Callback for a single function
+ * 
+ * @tparam R 
+ * @param func 
+ * @return Callback<R> 
+ */
 template<typename R>
 Callback<R> callback(R(*func)()) {
     return Callback<R>(func);
 }
 
-// Callback for an Object
+/**
+ * @brief Callback for an Object's function
+ * 
+ * @tparam T 
+ * @tparam U 
+ * @tparam R 
+ * @param obj 
+ * @param method 
+ * @return Callback<R> 
+ */
 template<typename T, typename U, typename R>
 Callback<R> callback(U* obj, R(T::*method)()) {
     return Callback<R>(obj, method);
 }
 
+/**
+ * @brief Callback for an Object's function
+ * 
+ * @tparam T 
+ * @tparam U 
+ * @tparam R 
+ * @param obj 
+ * @param method 
+ * @return Callback<R> 
+ */
 template<typename T, typename U, typename R>
 Callback<R> callback(U &obj, R(T::*method)()) {
     return Callback<R>(&obj, method);

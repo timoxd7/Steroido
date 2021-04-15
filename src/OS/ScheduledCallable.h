@@ -5,6 +5,10 @@
 
 typedef float sleeptime_t;
 
+/**
+ * @brief A Callable which can be called called with a given schedule
+ * 
+ */
 class ScheduledCallable : public ICallable {
     public:
         ScheduledCallable() : _sleeptime(0) {}

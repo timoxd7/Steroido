@@ -1,3 +1,8 @@
+/**
+ * @brief Testing Header only meant for testing Steroido-Intern things
+ * 
+ */
+
 #ifndef TESTING_HEADER_H
 #define TESTING_HEADER_H
 

@@ -8,14 +8,18 @@
 // Define a standard wait time, e.g. for a loop wait
 #define STEROIDO_STD_WAIT_TIME 0.0001 // s
 
+// Some shorthand things
+#if defined(TEENSY) || defined(NUCLEO)
+    #define BIG_ARDUINO
+#endif
 
 // Include Arduino Hardware Drivers
 #ifdef Arduino_h
     // Baseclass
     #include "Common/NonCopyable.h"
 
-    // STL
-    #if defined(TEENSY) || defined(BIG_ARDUINO)
+    // STL (not included in AVR by arduino)
+    #ifdef BIG_ARDUINO
         #include <vector>
     #else
         #include "Common/vector.h"

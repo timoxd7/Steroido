@@ -1,6 +1,10 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+/**
+ * @brief A really basic Scheduler for a really basic RTOS
+ * 
+ */
 class Scheduler {
     public:
         void run() {
