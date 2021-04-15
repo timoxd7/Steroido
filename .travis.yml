@@ -36,10 +36,11 @@
  install:
      - pip install platformio
      - platformio update
+     - platformio platform install native
 
  script:
      - platformio run -e nanoatmega328new -e teensy32 -e nucleo_f446re_mbed -e nucleo_f446re_arduino
-     - platformio test -e Linux_x86_64
+     - platformio test -e Native
 
 
 #
