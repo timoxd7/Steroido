@@ -34,7 +34,7 @@
          - "~/.platformio"
 
  install:
-     - pip install -U "platformio==4.0.3"
+     - pip install platformio
      - platformio update
 
  script:
