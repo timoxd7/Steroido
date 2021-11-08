@@ -49,6 +49,7 @@
     #include "AbstractionLayer/Arduino/DigitalOut.h"
     #include "AbstractionLayer/Arduino/PwmOut.h"
     #include "Common/DelayedSwitch.h"
+    #include "Common/FloatFollower.h"
 
     #ifndef STEROIDO_DISABLE_RTOS
         // OS
