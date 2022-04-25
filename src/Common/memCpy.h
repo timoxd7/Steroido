@@ -19,4 +19,9 @@ T* memCpy(T* dest, const T* src, size_t count) {
     return dest;
 }
 
+template <typename T>
+void memCpyN(T* dest, const T* src, size_t count) {
+    while (count--) *dest++ = *src++;
+}
+
 #endif // MEMCPY_H
