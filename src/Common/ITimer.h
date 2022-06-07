@@ -55,6 +55,15 @@ class ITimer : private NonCopyable<ITimer> {
         }
 
         /**
+         * @brief Restart the Timer (reset -> start)
+         *
+         */
+        void restart() {
+            reset();
+            start();
+        }
+
+        /**
          * @brief Read the value of the Timer
          * 
          * @return float Seconds running
