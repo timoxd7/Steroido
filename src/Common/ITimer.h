@@ -16,6 +16,18 @@ class ITimer : private NonCopyable<ITimer> {
         }
 
         /**
+         * @brief Construct a new ITimer with predefined state
+         *
+         */
+        ITimer(bool autoStart) {
+            reset();
+            
+            if (autoStart) {
+                start();
+            }
+        }
+
+        /**
          * @brief Start the Timer if not already running
          * 
          */
