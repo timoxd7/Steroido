@@ -13,7 +13,7 @@ class Timer : public ITimer {
         Timer(bool autoStart) : ITimer(autoStart) {}
     
     private:
-        inline unsigned long getMillis() {
+        unsigned long getMillis() {
             return millis();
         }
 };
