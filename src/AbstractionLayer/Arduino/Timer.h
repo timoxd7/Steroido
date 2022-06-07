@@ -8,6 +8,10 @@
  * 
  */
 class Timer : public ITimer {
+    public:
+        Timer() : ITimer() {}
+        Timer(bool autoStart) : ITimer(autoStart) {}
+    
     private:
         inline unsigned long getMillis() {
             return millis();
