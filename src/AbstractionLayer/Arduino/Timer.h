@@ -3,6 +3,7 @@
 
 #include "Common/ITimer.h"
 
+#ifndef NUCLEO
 /**
  * @brief Easy way to measure Time
  * 
@@ -17,5 +18,8 @@ class Timer : public ITimer {
             return millis();
         }
 };
+#else
+typedef ITimer Timer;
+#endif
 
 #endif // TIMER_H

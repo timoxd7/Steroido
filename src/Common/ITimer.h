@@ -165,7 +165,11 @@ class ITimer : private NonCopyable<ITimer> {
          * 
          * @return unsigned long the Milliseconds since the start of the Microcontroller
          */
+        #ifndef NUCLEO // virtual fix
         virtual unsigned long getMillis() = 0;
+        #else
+        unsigned long getMillis() { return millis(); }
+        #endif
 };
 
 #endif // ITIMER_H
