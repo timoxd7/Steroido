@@ -32,12 +32,20 @@ class ITimer : private NonCopyable<ITimer> {
          * 
          */
         void start() {
+            start(getMillis());
+        }
+        
+        /**
+         * @brief Start the Timer if not already running, using the given currentTime
+         * 
+         */
+        void start(unsigned long currentTime) {
             if (!_running) {
                 if (_stopped) {
-                    _startedAt = getMillis() - (_stoppedAt - _startedAt);
+                    _startedAt = currentTime - (_stoppedAt - _startedAt);
                     _stopped = false;
                 } else {
-                    _startedAt = getMillis();
+                    _startedAt = currentTime;
                 }
 
                 _running = true;
@@ -73,6 +81,15 @@ class ITimer : private NonCopyable<ITimer> {
         void restart() {
             reset();
             start();
+        }
+    
+        /**
+         * @brief Restart the Timer (reset -> start)
+         *
+         */
+        void restart(unsigned long currentTime) {
+            reset();
+            start(currentTime);
         }
     
         /**
