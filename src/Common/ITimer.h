@@ -74,29 +74,43 @@ class ITimer : private NonCopyable<ITimer> {
             reset();
             start();
         }
-
+    
         /**
          * @brief Read the value of the Timer
-         * 
+         *
          * @return float Seconds running
          */
-        float read() {
-            return (float)read_ms() / 1000.0;
-        }
+        float read() { return (float)read_ms() / 1000.0; }
+
+        /**
+         * @brief Read the value of the Timer while giving the current time.
+         *
+         * @param currentMillis
+         * @return float
+         */
+        float read(unsigned long currentMillis) { return (float)read_ms(currentMillis) / 1000.0; }
 
         /**
          * @brief Read the value of the Timer
-         * 
+         *
          * @return unsigned long Milliseconds running
          */
-        unsigned long read_ms() {
+        unsigned long read_ms() { return read_ms(getMillis()); }
+
+        /**
+         * @brief Read the value of the Timer while giving the current time.
+         *
+         * @param currentMillis
+         * @return unsigned long
+         */
+        unsigned long read_ms(unsigned long currentMillis) {
             unsigned long returnValue;
-            
-            if(_running) {
+
+            if (_running) {
                 if (_stopped) {
                     returnValue = _stoppedAt - _startedAt;
                 } else {
-                    returnValue = getMillis() - _startedAt;
+                    returnValue = currentMillis - _startedAt;
                 }
             } else {
                 returnValue = 0;
