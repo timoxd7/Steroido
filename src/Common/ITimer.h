@@ -145,6 +145,14 @@ class ITimer : private NonCopyable<ITimer> {
             return read();
         }
     
+        /**
+         * @brief Subtract an amount from this timer. Check that the timer is running before and only
+         * subtract the current value max, otherwise undefined behaviour.
+         *
+         * @param amount
+        */
+        void subtract(unsigned long amount) { _startedAt += amount; }
+    
     private:
         unsigned long _startedAt;
         unsigned long _stoppedAt;
